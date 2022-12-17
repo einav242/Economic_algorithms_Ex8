@@ -70,9 +70,14 @@ def vcg(lst):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
+    print("------2 people 2 item------")
     list1 = [[8, 4], [7, 2]]
     vcg(list1)
+    print("------3 people 3 item------")
     list2 = [[4, 7, 9], [5, 4, 2], [8, 3, 5]]
-    print(vcg(list2))
+    vcg(list2)
+    print("------4 people 4 item------")
+    list3 = [[4, 7, 9, 2], [5, 4, 2, 3], [8, 3, 5, 1], [1, 2, 3, 4]]
+    vcg(list3)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
