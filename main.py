@@ -1,10 +1,4 @@
-# This is a sample Python script.
 from itertools import permutations
-from typing import List
-
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
 
 def options(num) -> list():
@@ -19,39 +13,40 @@ def fact(n):
 
 
 def vcg(lst):
-    maxValue = float('-inf')
+    maxValue = float('-inf')  # maximum sum among all possibilities
     sumValue = 0
-    end_list = []
-    n = fact(len(lst[0]))
-    m = len(lst)
-    perm = options(m)
-    for premotechion in list(perm):
-        temp_list = []
-        for nmegical_number in range(0, m):
-            temp = premotechion[nmegical_number]
-            temp_list.append((lst[temp][nmegical_number]))
-        end_list.append(temp_list)
+    index = 0  # the index of the maximum sum among all possibilities
 
-    index = 0
-    lst_sum = []
-    for lst in end_list:
+    option_list = []  # list of all the option with value
+    lst_sum = []  # a list of the sums of the values of each option
+    lst_without = []  # a list of the sums of the values of each option without player number i
+    lst_max_sum = []  # the maximum amount of each option without player i
+
+    n = fact(len(lst[0]))  # number of option
+    m = len(lst)  # number of people
+    perm = options(m)  # list of all the permeation 1...m
+
+    for p in list(perm):
+        temp_list = []
+        for number in range(0, m):
+            temp = p[number]
+            temp_list.append((lst[temp][number]))
+        option_list.append(temp_list)
+
+    for lst in option_list:
         for i in lst:
             sumValue += i
         if sumValue > maxValue:
             maxValue = sumValue
-            index = end_list.index(lst)
+            index = option_list.index(lst)
         lst_sum.append(sumValue)
         sumValue = 0
 
-    lst_without = []
-    for i in range(len(end_list)):
+    for i in range(len(option_list)):
         temp_list2 = []
-        for j in range(len(end_list[i])):
-            temp_list2.append(lst_sum[i] - end_list[i][j])
+        for j in range(len(option_list[i])):
+            temp_list2.append(lst_sum[i] - option_list[i][j])
         lst_without.append(temp_list2)
-
-
-    lst_max_sum = []
 
     for i in range(m):
         maxValue = float('-inf')
@@ -64,16 +59,13 @@ def vcg(lst):
     value_lst = []
     benefit_lst = []
 
+    # print the result
     for i in range(m):
         pay_lst.append(lst_max_sum[i] - lst_without[index][i])
-        value_lst.append(end_list[index][i])
+        value_lst.append(option_list[index][i])
         benefit_lst.append(value_lst[i] - pay_lst[i])
-        print("person number ", i+1, ":\npayment: ", lst_max_sum[i] - lst_without[index][i], "\nvalue: ",end_list[index][i],"\nbenefit: ",value_lst[i] - pay_lst[i],"\n")
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+        print("person number ", i + 1, ":\npayment: ", lst_max_sum[i] - lst_without[index][i], "\nvalue: ",
+              option_list[index][i], "\nbenefit: ", value_lst[i] - pay_lst[i], "\n")
 
 
 # Press the green button in the gutter to run the script.
@@ -82,6 +74,5 @@ if __name__ == '__main__':
     vcg(list1)
     list2 = [[4, 7, 9], [5, 4, 2], [8, 3, 5]]
     print(vcg(list2))
-    print_hi('PyCharm')
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
