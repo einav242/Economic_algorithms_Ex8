@@ -25,7 +25,6 @@ def vcg(lst):
     for edge in max_matching:
         max_opt_without.append(max - g.edges[edge]['weight'])
     max_without = []
-    i = 0
     for edge in max_matching:
         new_g = g.copy()
         new_max = 0
