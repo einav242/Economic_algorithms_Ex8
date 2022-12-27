@@ -1,74 +1,52 @@
-from itertools import permutations
+import networkx as nx
 
 
-def options(num) -> list():
-    lst = list();
-    for i in range(num):
-        lst.append(i)
-    return permutations(lst)
+def buildGraph(lst):
+    g = nx.Graph()
+    for i in range(len(lst)):
+        g.add_node("item-" + str(i))
+        g.add_node("person-" + str(i))
 
-
-def fact(n):
-    return 1 if (n == 1 or n == 0) else n * fact(n - 1);
+    for i in range(len(lst)):
+        for j in range(len(lst[i])):
+            node1 = "person-" + str(j)
+            node2 = "item-" + str(i)
+            g.add_weighted_edges_from([(node1, node2, lst[i][j])])
+    return g
 
 
 def vcg(lst):
-    maxValue = float('-inf')  # maximum sum among all possibilities
-    sumValue = 0
-    index = 0  # the index of the maximum sum among all possibilities
-
-    option_list = []  # list of all the option with value
-    lst_sum = []  # a list of the sums of the values of each option
-    lst_without = []  # a list of the sums of the values of each option without player number i
-    lst_max_sum = []  # the maximum amount of each option without player i
-
-    n = fact(len(lst[0]))  # number of option
-    m = len(lst)  # number of people
-    perm = options(m)  # list of all the permeation 1...m
-
-    for p in list(perm):
-        temp_list = []
-        for number in range(0, m):
-            temp = p[number]
-            temp_list.append((lst[temp][number]))
-        option_list.append(temp_list)
-
-    for lst in option_list:
-        for i in lst:
-            sumValue += i
-        if sumValue > maxValue:
-            maxValue = sumValue
-            index = option_list.index(lst)
-        lst_sum.append(sumValue)
-        sumValue = 0
-
-    for i in range(len(option_list)):
-        temp_list2 = []
-        for j in range(len(option_list[i])):
-            temp_list2.append(lst_sum[i] - option_list[i][j])
-        lst_without.append(temp_list2)
-
-    for i in range(m):
-        maxValue = float('-inf')
-        for j in range(n):
-            if lst_without[j][i] > maxValue:
-                maxValue = lst_without[j][i]
-        lst_max_sum.append(maxValue)
-
-    pay_lst = []
-    value_lst = []
-    benefit_lst = []
-
-    # print the result
-    for i in range(m):
-        pay_lst.append(lst_max_sum[i] - lst_without[index][i])
-        value_lst.append(option_list[index][i])
-        benefit_lst.append(value_lst[i] - pay_lst[i])
-        print("person number ", i + 1, ":\npayment: ", lst_max_sum[i] - lst_without[index][i], "\nvalue: ",
-              option_list[index][i], "\nbenefit: ", value_lst[i] - pay_lst[i], "\n")
+    g = buildGraph(lst)
+    max_matching = nx.max_weight_matching(g)
+    max = 0
+    for edge in max_matching:
+        max += g.edges[edge]['weight']
+    max_opt_without = []
+    for edge in max_matching:
+        max_opt_without.append(max - g.edges[edge]['weight'])
+    max_without = []
+    i = 0
+    for edge in max_matching:
+        new_g = g.copy()
+        new_max = 0
+        if edge[0][0] == 'p':
+            new_g.remove_node(edge[0])
+        else:
+            new_g.remove_node(edge[1])
+        new_max_matching = nx.max_weight_matching(new_g)
+        for edge in new_max_matching:
+            new_max += g.edges[edge]['weight']
+        max_without.append(new_max)
+    i = 0
+    for edge in max_matching:
+        pay = max_without[i] - max_opt_without[i]
+        value = g.edges[edge]['weight']
+        benefit = value - pay
+        print("person number ", i + 1, ":\npayment: ", pay, "\nvalue: ",
+              value, "\nbenefit: ", benefit, "\n")
+        i += 1
 
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print("------2 people 2 item------")
     list1 = [[8, 4], [7, 2]]
